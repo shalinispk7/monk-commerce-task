@@ -21,18 +21,24 @@ const ProductList = ({ products, searchTerm }) => {
           title: curr.title,
           stock: curr.inventory_quantity,
           price: curr.price,
+          discAmount: '',
+          discType: '',
         })
         return acc
       }, [])
 
       console.log('variantsList: ', variantsList)
       if (selectionList.some((el) => el.id === productId)) {
+        //if product is part of selectionList, update the existing product in the array
         prodList = selectionList.map((el) => {
           if (el.id === productId) {
             return {
               id: productObj.id,
               title: productObj.title,
               img: productObj.image?.src,
+              discAmount: '',
+              discType: '',
+              showVariants: false,
               variants: variantsList,
             }
           } else return el
@@ -44,6 +50,9 @@ const ProductList = ({ products, searchTerm }) => {
             id: productObj.id,
             title: productObj.title,
             img: productObj.image?.src,
+            discAmount: '',
+            discType: '',
+            showVariants: false,
             variants: variantsList,
           },
         ]
@@ -69,6 +78,8 @@ const ProductList = ({ products, searchTerm }) => {
       title: variantObj.title,
       stock: variantObj.inventory_quantity,
       price: variantObj.price,
+      discAmount: '',
+      discType: '',
     }
 
     let prodList = selectionList
@@ -96,6 +107,9 @@ const ProductList = ({ products, searchTerm }) => {
             id: productObj.id,
             title: productObj.title,
             img: productObj.image?.src,
+            discAmount: '',
+            discType: '',
+            showVariants: false,
             variants: [selectedVariant],
           },
         ]
@@ -133,9 +147,6 @@ const ProductList = ({ products, searchTerm }) => {
       )
   )
 
-  useEffect(() => {
-    console.log('selectedVariants: ', selectedVariants)
-  }, [selectedVariants])
   return (
     <div className='max-h-96 overflow-y-auto'>
       {filteredProducts.map((product) => (
