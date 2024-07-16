@@ -11,6 +11,7 @@ const productSlice = createSlice({
     isModalOpen: false,
     page: 1,
     prodIndex: 0,
+    loading: false,
   },
   reducers: {
     setProductList: (state, action) => {
@@ -34,6 +35,9 @@ const productSlice = createSlice({
     setProdIndex: (state, action) => {
       state.prodIndex = action.payload
     },
+    setLoading: (state, action) => {
+      state.loading = action.payload
+    },
   },
 })
 
@@ -45,6 +49,7 @@ export const {
   setIsModalOpen,
   setSelectionList,
   setProdIndex,
+  setLoading,
 } = productSlice.actions
 
 export default productSlice.reducer

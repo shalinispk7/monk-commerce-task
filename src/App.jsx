@@ -1,4 +1,3 @@
-import '../src/app.css'
 import Products from './components/Products'
 
 function App() {

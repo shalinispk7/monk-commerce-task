@@ -150,53 +150,69 @@ const ProductList = ({ products, searchTerm }) => {
   return (
     <div className='max-h-96 overflow-y-auto'>
       {filteredProducts.map((product) => (
-        <div key={product.id} className='mb-4'>
-          <div className='flex items-center'>
-            <input
-              type='checkbox'
-              checked={
-                selectionList.some((el) => el.id === product.id) &&
-                selectionList.find((el) => el.id === product.id)?.variants
-                  ?.length ===
-                  apiResponse.find((el) => el.id === product.id)?.variants
-                    ?.length
-              }
-              onChange={(e) =>
-                toggleProductSelection(product.id, e.target.checked)
-              }
-              className='h-5 w-5 text-green-800'
-            />
-            <span className='ml-2 font-semibold'>{product.title}</span>
-          </div>
-          <div className='ml-8'>
-            {product.variants.map((variant) => (
-              <div key={variant.id} className='flex items-center py-1'>
-                <input
-                  type='checkbox'
-                  checked={selectionList
-                    .find((el) => el.id === product.id)
-                    ?.variants?.some((el) => el.id === variant.id)}
-                  onChange={(e) =>
-                    toggleVariantSelection(
-                      product.id,
-                      variant.id,
-                      e.target.checked
-                    )
-                  }
-                  className='h-5 w-5 text-green-800'
+        <>
+          {' '}
+          <div key={product.id} className='mb-4 mt-1'>
+            <div className='flex items-center'>
+              <input
+                type='checkbox'
+                checked={
+                  selectionList.some((el) => el.id === product.id) &&
+                  selectionList.find((el) => el.id === product.id)?.variants
+                    ?.length ===
+                    apiResponse.find((el) => el.id === product.id)?.variants
+                      ?.length
+                }
+                onChange={(e) =>
+                  toggleProductSelection(product.id, e.target.checked)
+                }
+                className='h-5 w-5 text-green-800'
+              />
+              {product.image.src && (
+                <img
+                  src={product.image.src}
+                  className='w-8 h-8 object-cover rounded mx-3 '
                 />
-                <span className='ml-2'>{variant.title}</span>
-                {variant.inventory_quantity > 0 && (
-                  <span className='ml-auto text-gray-600'>
-                    {variant.inventory_quantity} available
-                  </span>
-                )}
+              )}
+              <span className='ml-2 font-semibold'>{product.title}</span>
+            </div>
+            <hr className='mt-1' />
+            <div className='ml-8'>
+              {product.variants.map((variant, index) => (
+                <>
+                  <div key={variant.id} className='flex items-center py-1 mt-1'>
+                    <input
+                      type='checkbox'
+                      checked={selectionList
+                        .find((el) => el.id === product.id)
+                        ?.variants?.some((el) => el.id === variant.id)}
+                      onChange={(e) =>
+                        toggleVariantSelection(
+                          product.id,
+                          variant.id,
+                          e.target.checked
+                        )
+                      }
+                      className='h-5 w-5 text-green-800'
+                    />
+                    <span className='ml-2'>{variant.title}</span>
+                    {variant.inventory_quantity > 0 && (
+                      <span className='ml-auto text-gray-600'>
+                        {variant.inventory_quantity} available
+                      </span>
+                    )}
 
-                <span className='ml-4 text-gray-600'>${variant.price}</span>
-              </div>
-            ))}
+                    <span className='ml-4 text-gray-600'>${variant.price}</span>
+                  </div>
+                  {index < product.variants.length - 1 && (
+                    <div className='border-t border-gray-300 my-2'></div>
+                  )}
+                </>
+              ))}
+            </div>
           </div>
-        </div>
+          <hr className='my-2' />
+        </>
       ))}
     </div>
   )

@@ -111,7 +111,7 @@ const Products = () => {
                           disabled={true}
                         />
 
-                        <div class='absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer'>
+                        <div className='absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer'>
                           <FontAwesomeIcon
                             icon={faPencil}
                             onClick={() => onEdit(0)} //to add product at 0th position
@@ -210,11 +210,13 @@ const Products = () => {
                                 </select>
                               </div>
                             )}
-                            <FontAwesomeIcon
-                              icon={faClose}
-                              className='text-center cursor-pointer'
-                              onClick={() => onRemoveProduct(product.id)}
-                            />
+                            {productList.length > 1 && (
+                              <FontAwesomeIcon
+                                icon={faClose}
+                                className='text-center cursor-pointer'
+                                onClick={() => onRemoveProduct(product.id)}
+                              />
+                            )}
                           </div>
                           <div>
                             {/************ variants block *********************/}
@@ -222,16 +224,13 @@ const Products = () => {
                               onClick={() => toggleVariants(product.id)}
                               className='ml-auto text-blue-500 pb-2'
                             >
-                              {product.variants.length > 0 &&
+                              {product.variants.length > 1 &&
                                 (product.showVariants
                                   ? 'Hide variants'
                                   : 'Show variants')}
                             </button>
                             {product.showVariants && (
-                              <Variants
-                                onDiscountTypeChg={onDiscountTypeChg}
-                                product={product}
-                              />
+                              <Variants product={product} />
                             )}
                           </div>
                         </div>

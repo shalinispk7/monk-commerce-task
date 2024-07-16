@@ -9,11 +9,13 @@ import { apiURL, xApiKey } from '../constants'
 import {
   setApiResponse,
   setIsModalOpen,
+  setLoading,
   setPage,
   setProductList,
   setSearchTerm,
   setSelectionList,
 } from '../reduxstore/productSlice'
+import Loader from './Loader'
 
 const ProductModal = ({}) => {
   const dispatch = useDispatch()
@@ -25,6 +27,7 @@ const ProductModal = ({}) => {
     prodIndex,
     productList,
     selectionList,
+    loading,
   } = useSelector((store) => store.productSlice)
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500) // 500ms debounce delay
@@ -34,19 +37,28 @@ const ProductModal = ({}) => {
       `Fetching products for page: ${page}, searchTerm: ${debouncedSearchTerm}`
     )
 
-    const response = await fetch(
-      `${apiURL}?search=${debouncedSearchTerm}&page=${page}&limit=10`,
-      {
-        method: 'GET',
-        headers: {
-          'x-api-key': xApiKey,
-        },
-      }
-    )
-    const data = await response.json()
-    Array.isArray(data)
-      ? dispatch(setApiResponse(data))
-      : dispatch(setApiResponse([]))
+    try {
+      dispatch(setLoading(true))
+      const response = await fetch(
+        `${apiURL}?search=${debouncedSearchTerm}&page=${page}&limit=10`,
+        {
+          method: 'GET',
+          headers: {
+            'x-api-key': xApiKey,
+          },
+        }
+      )
+      const data = await response.json()
+
+      Array.isArray(data)
+        ? dispatch(setApiResponse(data))
+        : dispatch(setApiResponse([]))
+      dispatch(setLoading(false))
+    } catch (e) {
+      console.error('Fetch error:', error)
+      dispatch(setLoading(false))
+      dispatch(setApiResponse([]))
+    }
   }
 
   const addProduct = () => {
@@ -59,6 +71,11 @@ const ProductModal = ({}) => {
     }
   }
 
+  const onModalClose = () => {
+    dispatch(setIsModalOpen(false))
+    dispatch(setSelectionList([]))
+  }
+
   useEffect(() => {
     dispatch(setApiResponse([])) // Reset products when searchTerm changes
     dispatch(setPage(1)) // Reset page number
@@ -68,7 +85,7 @@ const ProductModal = ({}) => {
   return (
     <Modal
       isOpen={isModalOpen}
-      onRequestClose={() => dispatch(setIsModalOpen(false))}
+      onRequestClose={() => onModalClose()}
       className='fixed z-10 inset-0 overflow-y-auto'
       overlayClassName='fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity'
     >
@@ -77,7 +94,7 @@ const ProductModal = ({}) => {
           <div>
             <div className='flex justify-between items-center mb-4'>
               <h2 className='text-lg font-semibold'>Select Products</h2>
-              <button onClick={() => dispatch(setIsModalOpen(false))}>
+              <button onClick={() => onModalClose()}>
                 <XIcon className='h-6 w-6 text-gray-600' />
               </button>
             </div>
@@ -92,7 +109,9 @@ const ProductModal = ({}) => {
               <SearchIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400' />
             </div>
 
-            {apiResponse.length > 0 ? (
+            {loading ? (
+              <Loader />
+            ) : apiResponse.length > 0 ? (
               <ProductList products={apiResponse} searchTerm={searchTerm} />
             ) : (
               <div>No Products Found</div>
@@ -102,7 +121,7 @@ const ProductModal = ({}) => {
               <h2>{selectionList.length} Product added</h2>
               <div className='flex justify-end '>
                 <button
-                  onClick={() => dispatch(setIsModalOpen(false))}
+                  onClick={() => onModalClose()}
                   className='px-4 py-1 text-gray-600 border border-gray-300 rounded-md mr-2'
                 >
                   Cancel

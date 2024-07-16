@@ -5,7 +5,7 @@ import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { useSelector } from 'react-redux'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
-const Variants = ({ onDiscountTypeChg, product }) => {
+const Variants = ({ product }) => {
   const { productList } = useSelector((store) => store.productSlice)
   const dispatch = useDispatch()
 
@@ -20,6 +20,26 @@ const Variants = ({ onDiscountTypeChg, product }) => {
       return el
     })
     dispatch(setProductList(variantDeSelected))
+  }
+
+  const onVariantDiscTypeChg = (type, value, variantId) => {
+    const updProductList = productList.map((product) => {
+      if (product.id === product.id) {
+        return {
+          ...product,
+          variants: product.variants.map((variant) => {
+            if (variant.id === variantId)
+              return {
+                ...variant,
+                [type]: value,
+              }
+            else return variant
+          }),
+        }
+      }
+      return product
+    })
+    dispatch(setProductList(updProductList))
   }
 
   const onDragEnd = (result) => {
@@ -67,12 +87,13 @@ const Variants = ({ onDiscountTypeChg, product }) => {
                       className='w-[15%]	border-solid	border-2 rounded-full'
                       type='text'
                       name='discAmount'
+                      autoComplete='off'
                       value={variant?.discAmount}
                       onChange={(e) =>
-                        onDiscountTypeChg(
+                        onVariantDiscTypeChg(
                           'discAmount',
                           e.target.value,
-                          product.id
+                          variant.id
                         )
                       }
                     />
@@ -81,10 +102,10 @@ const Variants = ({ onDiscountTypeChg, product }) => {
                       name='discType'
                       value={variant?.discType}
                       onChange={(e) =>
-                        onDiscountTypeChg(
+                        onVariantDiscTypeChg(
                           'discType',
                           e.target.value,
-                          product.id
+                          variant.id
                         )
                       }
                     >
