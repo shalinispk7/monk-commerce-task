@@ -26,7 +26,6 @@ const productSlice = createSlice({
       state.page = action.payload
     },
     setIsModalOpen: (state, action) => {
-      console.log(action)
       state.isModalOpen = action.payload
     },
     setSelectionList: (state, action) => {

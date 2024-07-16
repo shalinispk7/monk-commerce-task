@@ -3,16 +3,14 @@ import { setProductList } from '../reduxstore/productSlice'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { useSelector } from 'react-redux'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
-const Variants = (props) => {
-  const { onDiscountTypeChg, product, variant } = props
+const Variants = ({ onDiscountTypeChg, product }) => {
   const { productList } = useSelector((store) => store.productSlice)
   const dispatch = useDispatch()
 
   const onRemoveVariant = (productId, variantId) => {
-    //to remove variant on clicking X button
-
-    let variantDeSelected = productList.map((el) => {
+    const variantDeSelected = productList.map((el) => {
       if (el.id === productId) {
         return {
           ...el,
@@ -24,41 +22,89 @@ const Variants = (props) => {
     dispatch(setProductList(variantDeSelected))
   }
 
-  return (
-    <div className='input-container flex gap-4 w-1/2'>
-      <input
-        className=' text-md font-normal border border-slate-200 py-1 px-6 ps-2 outline outline-none w-2/4 rounded-full'
-        placeholder={variant?.title}
-        value={variant?.title ? variant.title : ''}
-        disabled={true}
-      />
+  const onDragEnd = (result) => {
+    if (!result.destination) return
 
-      <input
-        className='w-[15%]	border-solid	border-2 rounded-full'
-        type='text'
-        name='discAmount'
-        value={product?.discAmount}
-        onChange={(e) =>
-          onDiscountTypeChg('discAmount', e.target.value, product.id)
-        }
-      />
-      <select
-        className='w-1/5	border-solid	border-2  rounded-full'
-        name='discType'
-        value={product?.discType}
-        onChange={(e) =>
-          onDiscountTypeChg('discType', e.target.value, product.id)
-        }
-      >
-        <option value={'flat off'}>flat off</option>
-        <option value={'% off'}>% off</option>
-      </select>
-      <FontAwesomeIcon
-        icon={faClose}
-        className=' w-[15%]'
-        onClick={() => onRemoveVariant(product.id, variant.id)}
-      />
-    </div>
+    const reorderedVariants = Array.from(product.variants)
+    const [movedVariant] = reorderedVariants.splice(result.source.index, 1)
+    reorderedVariants.splice(result.destination.index, 0, movedVariant)
+
+    const updatedList = productList.map((el) => {
+      if (el.id === product.id) {
+        return { ...el, variants: reorderedVariants }
+      }
+      return el
+    })
+
+    dispatch(setProductList(updatedList))
+  }
+
+  return (
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId={`droppable-${product.id}`} type='variant'>
+        {(provided) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            {product.variants.map((variant, index) => (
+              <Draggable
+                key={index + variant.id}
+                draggableId={String(variant.id)}
+                index={index}
+              >
+                {(provided) => (
+                  <div
+                    className='input-container flex items-center gap-4 w-1/3  mb-2'
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <input
+                      className='text-md font-normal border border-slate-200 py-1 px-6 ps-2 outline outline-none w-2/4 rounded-full'
+                      placeholder={variant?.title}
+                      value={variant?.title ? variant.title : ''}
+                      disabled={true}
+                    />
+                    <input
+                      className='w-[15%]	border-solid	border-2 rounded-full'
+                      type='text'
+                      name='discAmount'
+                      value={variant?.discAmount}
+                      onChange={(e) =>
+                        onDiscountTypeChg(
+                          'discAmount',
+                          e.target.value,
+                          product.id
+                        )
+                      }
+                    />
+                    <select
+                      className='w-1/5	border-solid	border-2  rounded-full'
+                      name='discType'
+                      value={variant?.discType}
+                      onChange={(e) =>
+                        onDiscountTypeChg(
+                          'discType',
+                          e.target.value,
+                          product.id
+                        )
+                      }
+                    >
+                      <option value={'flat off'}>flat off</option>
+                      <option value={'% off'}>% off</option>
+                    </select>
+                    <FontAwesomeIcon
+                      className='cursor-pointer'
+                      icon={faClose}
+                      onClick={() => onRemoveVariant(product.id, variant.id)}
+                    />
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
   )
 }
 

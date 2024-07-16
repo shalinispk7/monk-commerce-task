@@ -99,7 +99,7 @@ const ProductModal = ({}) => {
             )}
 
             <div className='flex justify-between align-center mt-4'>
-              <h2>Product added</h2>
+              <h2>{selectionList.length} Product added</h2>
               <div className='flex justify-end '>
                 <button
                   onClick={() => dispatch(setIsModalOpen(false))}
