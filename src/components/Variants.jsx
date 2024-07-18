@@ -72,46 +72,51 @@ const Variants = ({ product }) => {
               >
                 {(provided) => (
                   <div
-                    className='input-container flex items-center gap-4 w-1/3  mb-2'
+                    className='flex items-center gap-3 mb-2 ml-12'
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <input
-                      className='text-md font-normal border border-slate-200 py-1 px-6 ps-2 outline outline-none w-2/4 rounded-full'
-                      placeholder={variant?.title}
-                      value={variant?.title ? variant.title : ''}
-                      disabled={true}
-                    />
-                    <input
-                      className='w-[15%]	border-solid	border-2 rounded-full'
-                      type='text'
-                      name='discAmount'
-                      autoComplete='off'
-                      value={variant?.discAmount}
-                      onChange={(e) =>
-                        onVariantDiscTypeChg(
-                          'discAmount',
-                          e.target.value,
-                          variant.id
-                        )
-                      }
-                    />
-                    <select
-                      className='w-1/5	border-solid	border-2  rounded-full'
-                      name='discType'
-                      value={variant?.discType}
-                      onChange={(e) =>
-                        onVariantDiscTypeChg(
-                          'discType',
-                          e.target.value,
-                          variant.id
-                        )
-                      }
-                    >
-                      <option value={'flat off'}>flat off</option>
-                      <option value={'% off'}>% off</option>
-                    </select>
+                    <div className='w-60 '>
+                      <input
+                        className='text-md font-normal border-solid border-2 py-1 px-4 ps-4  outline outline-none rounded-full w-full shadow-lg'
+                        placeholder={variant?.title}
+                        value={variant?.title ? variant.title : ''}
+                        disabled={true}
+                      />
+                    </div>
+                    <div className='w-[190px] flex items-center gap-3'>
+                      <input
+                        className='p-1 px-3 w-1/3 border-solid	border-2 rounded-full shadow-lg outline outline-none'
+                        type='text'
+                        name='discAmount'
+                        autoComplete='off'
+                        value={variant?.discAmount}
+                        onChange={(e) =>
+                          onVariantDiscTypeChg(
+                            'discAmount',
+                            e.target.value,
+                            variant.id
+                          )
+                        }
+                      />
+                      <select
+                        className='p-1 px-3 ms-2 border-solid	border-2  rounded-full shadow-lg outline outline-none'
+                        name='discType'
+                        value={variant?.discType}
+                        onChange={(e) =>
+                          onVariantDiscTypeChg(
+                            'discType',
+                            e.target.value,
+                            variant.id
+                          )
+                        }
+                      >
+                        <option value={'flat off'}>flat off</option>
+                        <option value={'% off'}>% off</option>
+                      </select>
+                    </div>
+
                     <FontAwesomeIcon
                       className='cursor-pointer'
                       icon={faClose}

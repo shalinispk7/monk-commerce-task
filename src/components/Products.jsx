@@ -2,6 +2,7 @@ import {
   faClose,
   faPencil,
   faAngleDown,
+  faAngleUp,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
@@ -12,6 +13,7 @@ import {
   setIsModalOpen,
   setProdIndex,
   setProductList,
+  setSearchTerm,
 } from '../reduxstore/productSlice'
 import ProductModal from './ProductModal'
 
@@ -22,6 +24,7 @@ const Products = () => {
   const dispatch = useDispatch()
 
   const onEdit = (index) => {
+    dispatch(setSearchTerm(''))
     dispatch(setProdIndex(index))
     dispatch(setIsModalOpen(true))
   }
@@ -89,7 +92,7 @@ const Products = () => {
         </div>
 
         <div>
-          <div className='text-md font-semibold mb-4 ms-4'>Discount</div>
+          <div className='text-md font-semibold mb-4 ms-20'>Discount</div>
         </div>
       </div>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -104,9 +107,9 @@ const Products = () => {
                 <li>
                   <div className='flex gap-4 mb-6'>
                     <div>
-                      <div className='relative w-52'>
+                      <div className='relative w-72'>
                         <input
-                          className=' text-md font-normal border border-slate-200 py-1 px-6 ps-2 outline outline-none w-full pr-8'
+                          className=' text-md font-normal border border-slate-200 py-1 px-6 ps-4 outline outline-none w-full pr-8'
                           placeholder={'Select Product'}
                           disabled={true}
                         />
@@ -142,9 +145,9 @@ const Products = () => {
                       >
                         <div className='flex flex-col gap-4 mb-6'>
                           <div className='flex flex-row items-center gap-3'>
-                            <div className='relative w-52'>
+                            <div className='relative w-72'>
                               <input
-                                className=' text-md font-normal border border-slate-200 py-1 px-6 ps-2 outline outline-none w-full pr-8'
+                                className=' text-md font-normal border-solid border-2 py-1 px-6 ps-4 outline outline-none w-full pr-8 shadow-lg'
                                 placeholder={
                                   product?.title ? '' : 'Select Product'
                                 }
@@ -180,11 +183,12 @@ const Products = () => {
                                 Add Discount
                               </button>
                             ) : (
-                              <div>
+                              <div className='w-[190px]'>
                                 <input
-                                  className='w-1/3 boder-solid border-2'
+                                  className='w-1/3 border-solid border-2 p-1 px-3 shadow-lg outline outline-none'
                                   type='text'
                                   name='discAmount'
+                                  autoComplete='off'
                                   value={product?.discAmount}
                                   onChange={(e) =>
                                     onDiscountTypeChg(
@@ -197,6 +201,7 @@ const Products = () => {
                                 <select
                                   name='discType'
                                   value={product?.discType}
+                                  className='ms-5 border-solid border-2 p-1 px-3 shadow-lg outline outline-none'
                                   onChange={(e) =>
                                     onDiscountTypeChg(
                                       'discType',
@@ -220,16 +225,31 @@ const Products = () => {
                           </div>
                           <div>
                             {/************ variants block *********************/}
-                            <button
-                              onClick={() => toggleVariants(product.id)}
-                              className='ml-auto text-blue-500 pb-2'
-                            >
-                              {product.variants.length > 1 &&
-                                (product.showVariants
-                                  ? 'Hide variants'
-                                  : 'Show variants')}
-                            </button>
-                            {product.showVariants && (
+                            {product.variants.length > 1 && (
+                              <button
+                                onClick={() => toggleVariants(product.id)}
+                                className='ml-[360px] text-blue-500 pb-2'
+                              >
+                                {product.variants.length > 1 &&
+                                  (product.showVariants ? (
+                                    <>
+                                      <span className='me-2 underline'>
+                                        Hide variants
+                                      </span>
+                                      <FontAwesomeIcon icon={faAngleUp} />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className='me-2'>
+                                        Show variants
+                                      </span>
+                                      <FontAwesomeIcon icon={faAngleDown} />
+                                    </>
+                                  ))}
+                              </button>
+                            )}
+                            {(product.showVariants ||
+                              product.variants.length === 1) && (
                               <Variants product={product} />
                             )}
                           </div>

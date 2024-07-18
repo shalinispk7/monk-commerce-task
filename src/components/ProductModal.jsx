@@ -68,6 +68,8 @@ const ProductModal = ({}) => {
       dispatch(setProductList(updatedList))
       dispatch(setIsModalOpen(false))
       dispatch(setSelectionList([]))
+    } else {
+      dispatch(setIsModalOpen(false))
     }
   }
 
@@ -86,11 +88,11 @@ const ProductModal = ({}) => {
     <Modal
       isOpen={isModalOpen}
       onRequestClose={() => onModalClose()}
-      className='fixed z-10 inset-0 overflow-y-auto'
+      className='fixed z-10 inset-0 h-2/5'
       overlayClassName='fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity'
     >
-      <div className='flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0'>
-        <div className='inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6'>
+      <div className='flex items-center justify-center px-4 text-center sm:block sm:p-0'>
+        <div className='inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-lg sm:w-full sm:p-6'>
           <div>
             <div className='flex justify-between items-center mb-4'>
               <h2 className='text-lg font-semibold'>Select Products</h2>
